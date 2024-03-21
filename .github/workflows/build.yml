@@ -1,0 +1,83 @@
+name: Build and Deploy
+
+on:
+    push:
+        branches: ["master"]
+    release:
+        types: [published]
+    workflow_dispatch:
+
+permissions:
+    contents: write
+    pages: write
+    id-token: write
+    packages: write
+
+jobs:
+    
+
+    deployPackage:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Build
+              run: |
+                    npm i
+                    npm run build
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: openagents-plugins-kv
+                  path: "./dist/"
+
+            - name: Compress dist
+              if: github.event_name == 'release'
+              run: |
+                  cd dist
+                  zip -r ../openagents-plugins-kv.zip .
+                  cd ..
+
+            - name: Deploy to release branch
+              if: github.event_name == 'release'
+              run: |
+                  # Commit the changes
+                  git config --global user.name "Github Actions"
+                  git config --global user.email "actions@users.noreply.github.com"
+
+                  git clone --single-branch --branch "releases" https://github.com/${GITHUB_REPOSITORY} releases
+                  version="`if [[ $GITHUB_REF == refs\/tags* ]]; then echo ${GITHUB_REF//refs\/tags\//}; fi`"
+
+                  cd releases
+                  mkdir -p ${version}
+                  mkdir -p latest
+                  cp -Rf ../dist/ ${version}/
+
+                  git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+
+                  git add . || true
+                  git commit -m "update ${version}" || true
+                  git push origin releases || true
+
+            - name: Deploy to GitHub Releases
+              if: github.event_name == 'release'
+              run: |
+                  set -e
+                  echo "${GITHUB_EVENT_PATH}"
+                  cat ${GITHUB_EVENT_PATH}
+                  releaseId=$(jq --raw-output '.release.id' ${GITHUB_EVENT_PATH})
+
+                  echo "Upload to release $releaseId"
+
+                  filename="./openagents-plugins-kv.zip"
+                  url="https://uploads.github.com/repos/${GITHUB_REPOSITORY}/releases/$releaseId/assets?name=$(basename $filename)"
+                  echo "Upload to $url"
+                  curl -L \
+                  -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                  -H "Content-Type: application/zip" \
+                  --data-binary @"$filename" \
+                  "$url"
+
+                 
