@@ -196,9 +196,9 @@ function run() {
             }
             case "debug": {
                 const out = {};
-                out.set = set("TestKey", "TestValue" + Math.random(), 60000,  ["wss://nostr.rblb.it:7777"], "http://127.0.0.1:3000")
-                out.check = check([out.set.submissionId], "http://127.0.0.1:3000");
-                out.get = get("TestKey", ["*"], 10, ["wss://nostr.rblb.it:7777"], "http://127.0.0.1:3000")
+                out.set = set("TestKey", "TestValue" + Math.random(), 60000, undefined, "http://127.0.0.1:3000")
+                out.check = check(out.set.submissionIds, "http://127.0.0.1:3000");
+                out.get = get("TestKey", ["*"], 10, undefined, "http://127.0.0.1:3000")
                 Host.outputString(JSON.stringify(out, undefined, 2));
                 break;
             }

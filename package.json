@@ -1,6 +1,6 @@
 {
-  "name": "openagents-multiagent-kv",
-  "version": "1.0.0",
+  "name": "openagents-plugins-kv",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,8 +10,8 @@
     "debug": "npm run build && JSON='{\"action\":\"debug\"}' npm run start"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "rblb",
+  "license": "BSD-3-Clause",
   "devDependencies": {
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "esbuild": "^0.20.2"

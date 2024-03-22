@@ -39,21 +39,21 @@ extism call plugin.wasm run --input '{
   "key":"ThisIsATest", 
   "value":"123", 
   "expireAfter": 60000,
-  "relays":["wss://nostr.rblb.it:7777"],
   "authorPriv":"b2ad483c219271e3468096711fe12caf6c1b5ecebfb7e141d8d64a6a7ec81e1e"
 }' --wasi --allow-host '*'
 ```
 
 3. Get the value
+
 ```bash
 extism call plugin.wasm run --input '{
   "action":"get", 
   "kvprovider":"https://nostr.rblb.it:7778",
   "key":"ThisIsATest", 
-  "relays":["wss://nostr.rblb.it:7777"],
   "authors":["d545d5c59786ae5b62cee15947d6595a941e4932b1b4fa02f63ea9f88858cfa1"]
 }' --wasi --allow-host '*'
 ```
+Note: we can specify a list of relays to publish using the `relays` field, if not specified the default relays configured in the nostr-kv instance will be used.
 
 4. Check [API](#API) for more details on the actions and their parameters.
 
@@ -78,7 +78,7 @@ JSON='
   "key":"testKey", // the key
   "value":"testValue", // the value 
   "expireAfter": 60000, // optional: the key-value pair will be deleted after this time in ms
-  "relays":["wss://nostr.rblb.it:7777"], // the nostr relays to use for finalization
+  "relays":["wss://nostr.rblb.it:7777"], // optional: the nostr relays to use for finalization. The default relays configured in the nostr-kv instance will be used if not specified
   "authorPriv":"", // optional: the private key of the author, if not specified a new key will be generated
 }' npm run start
 ```
@@ -115,7 +115,7 @@ JSON='
     "key":"testKey", // the key to get the value for
     "authors":["*"], // optional: an array of author public keys to filter the key-value pairs by, leave it empty or use the wildcard "*" for all authors.
     "maxHistory":10, // optional: the maximum number of old values to return, note: only the most recent value is kept for each author
-    "relays":["wss://nostr.rblb.it:7777"], // the nostr relays to query 
+    "relays":["wss://nostr.rblb.it:7777"], // optional: the nostr relays to query. The default relays configured in the nostr-kv instance will be used if not specified
 }' npm run start
 ```
 
@@ -160,7 +160,7 @@ JSON='
 
 ### Result
 ```jsonc
-[ // array of status
+[ // array of statuses
     "success or expired"
 ]
 ```
