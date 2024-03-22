@@ -1,5 +1,5 @@
 
-# Key-Value storage for OpenAgents
+# openagents-plugins-kv: Key-Value storage for OpenAgents
 A Key-Value storage plugin for [OpenAgents](https://openagents.com/) that is eventually-consistent on nostr using [NIP-78](https://github.com/nostr-protocol/nips/blob/master/78.md)
 It can be used to store agent states, send data between agents or agent instances, or even to communicate with external services on nostr.
 
