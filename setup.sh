@@ -23,30 +23,29 @@ if [ ! -d binaryen ]; then
 
   curl -L -O "https://github.com/extism/js-pdk/releases/download/$TAG/extism-js-$ARCH-$OS-$TAG.gz"
 
+  mkdir -p extismjs/bin
+  
   gunzip extism-js*.gz
-  sudo mv extism-js-* /usr/local/bin/extism-js
-  chmod +x /usr/local/bin/extism-js
+  mv extism-js-* extismjs/bin/extism-js
+  chmod +x extismjs/bin/extism-js
 
-  if ! which "wasm-merge" > /dev/null; then
-    echo "Installing wasm-merge..."
+  echo "Installing wasm-merge..."
 
-    # binaryen use arm64 instead where as extism-js uses aarch64 for release file naming
-    case "$ARCH" in
-      aarch64*)  ARCH="arm64" ;;
-    esac
+  # binaryen use arm64 instead where as extism-js uses aarch64 for release file naming
+  case "$ARCH" in
+    aarch64*)  ARCH="arm64" ;;
+  esac
 
-    # matches the case where the user installs extism-pdk in a Linux-based Docker image running on mac m1
-    # binaryen didn't have arm64 release file for linux 
-    if [ $ARCH = "arm64" ] && [ $OS = "linux" ]; then
-      ARCH="x86_64"
-    fi
-
-    curl -L -O "https://github.com/WebAssembly/binaryen/releases/download/$BINARYEN_TAG/binaryen-$BINARYEN_TAG-$ARCH-$OS.tar.gz"
-    tar xf "binaryen-$BINARYEN_TAG-$ARCH-$OS.tar.gz"
-    mv "binaryen-$BINARYEN_TAG"/ binaryen/
-  else
-    echo "wasm-merge already installed"
+  # matches the case where the user installs extism-pdk in a Linux-based Docker image running on mac m1
+  # binaryen didn't have arm64 release file for linux 
+  if [ $ARCH = "arm64" ] && [ $OS = "linux" ]; then
+    ARCH="x86_64"
   fi
+
+  curl -L -O "https://github.com/WebAssembly/binaryen/releases/download/$BINARYEN_TAG/binaryen-$BINARYEN_TAG-$ARCH-$OS.tar.gz"
+  tar xf "binaryen-$BINARYEN_TAG-$ARCH-$OS.tar.gz"
+  mv "binaryen-$BINARYEN_TAG"/ binaryen/
+ 
 fi
 
 if [ ! -f extism-install ]; then

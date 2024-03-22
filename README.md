@@ -11,6 +11,7 @@ Event validation and signing happens on the plugin side, so the trust on the kvp
 
 # Build
 ```bash
+npm i
 npm run build
 ```
 
